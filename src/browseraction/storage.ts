@@ -3,8 +3,7 @@ import browser from 'webextension-polyfill';
 export enum StorageKey {
   urlList = 'txt',
   lazyload = 'lazyload',
-  random = 'random',
-  reverse = 'reverse',
+  orderSequence = 'orderSequence',
   ignoreDuplicates = 'ignoreDuplicates',
   preserve = 'preserve',
 }
@@ -12,8 +11,7 @@ export enum StorageKey {
 export interface StoredOptions {
   [StorageKey.urlList]: string;
   [StorageKey.lazyload]: boolean;
-  [StorageKey.random]: boolean;
-  [StorageKey.reverse]: boolean;
+  [StorageKey.orderSequence]: number;
   [StorageKey.ignoreDuplicates]: boolean;
   [StorageKey.preserve]: boolean;
 }
@@ -21,16 +19,14 @@ export interface StoredOptions {
 export async function getStoredOptions(): Promise<StoredOptions> {
   const txtVal = await browser.storage.local.get(StorageKey.urlList);
   const lazyloadVal = await browser.storage.local.get(StorageKey.lazyload);
-  const randomVal = await browser.storage.local.get(StorageKey.random);
-  const reverseVal = await browser.storage.local.get(StorageKey.reverse);
+  const orderSequenceVal = await browser.storage.local.get(StorageKey.orderSequence);
   const ignoreDuplicatesVal = await browser.storage.local.get(StorageKey.ignoreDuplicates);
   const preserveVal = await browser.storage.local.get(StorageKey.preserve);
 
   return {
     txt: txtVal?.txt || '',
     lazyload: lazyloadVal?.lazyload || false,
-    random: randomVal?.random || false,
-    reverse: reverseVal?.reverse || false,
+    orderSequence: orderSequenceVal?.orderSequence || 0,
     ignoreDuplicates: ignoreDuplicatesVal?.ignoreDuplicates || false,
     preserve: txtVal?.txt || preserveVal?.preserve || false,
   };

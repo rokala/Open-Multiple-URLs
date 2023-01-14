@@ -59,8 +59,8 @@ export const init = async (): Promise<void> => {
   const options = await getStoredOptions();
   ui.txtArea.value = options.txt;
   ui.lazyLoadCheckbox.checked = options.lazyload;
-  ui.randomCheckbox.checked = options.random;
-  ui.reverseCheckbox.checked = options.reverse;
+
+  ui.orderSequence.selectedIndex = options.orderSequence;
   ui.ignoreDuplicatesCheckbox.checked = options.ignoreDuplicates;
   ui.preserveCheckbox.checked = options.preserve;
 
@@ -76,8 +76,7 @@ export const init = async (): Promise<void> => {
     loadSites(
       ui.txtArea.value,
       ui.lazyLoadCheckbox.checked,
-      ui.randomCheckbox.checked,
-      ui.reverseCheckbox.checked,
+      ui.orderSequence.options[ui.orderSequence.selectedIndex].value,
       ui.ignoreDuplicatesCheckbox.checked,
     );
   });
@@ -94,16 +93,10 @@ export const init = async (): Promise<void> => {
       (<HTMLInputElement>event.target).checked
     )
   );
-  ui.randomCheckbox.addEventListener('change', (event) =>
-    storeValue<boolean>(
-      StorageKey.random,
-      (<HTMLInputElement>event.target).checked
-    )
-  );
-  ui.reverseCheckbox.addEventListener('change', (event) =>
-    storeValue<boolean>(
-      StorageKey.reverse,
-      (<HTMLInputElement>event.target).checked
+  ui.orderSequence.addEventListener('change', (event) =>
+    storeValue<number>(
+      StorageKey.orderSequence,
+      (<HTMLSelectElement>event.target).selectedIndex
     )
   );
   ui.ignoreDuplicatesCheckbox.addEventListener('change', (event) => {

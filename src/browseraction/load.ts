@@ -25,19 +25,21 @@ export const URL_LINE_SPLIT_REGEX = /\r\n?|\n/g;
 export function loadSites(
   text: string,
   lazyloading: boolean,
-  random: boolean,
-  reverse: boolean,
+  openingSequence: string,
   ignoreDuplicates: boolean
 ): void {
   const urlschemes = ['http', 'https', 'file', 'view-source'];
   let urls = text.split(URL_LINE_SPLIT_REGEX);
 
-  if (reverse) {
-    urls = urls.reverse();
-  }
-
-  if (random) {
-    urls = shuffle(urls);
+  switch (openingSequence) {
+    case 'reverse':
+      urls = urls.reverse();
+      break;
+    case 'random':
+      urls = shuffle(urls);
+      break;
+    default:
+      // Open tabs in chronological order, thus do nothing.
   }
 
   if (ignoreDuplicates) {
