@@ -1,7 +1,7 @@
 export interface UIDef {
   txtArea: HTMLTextAreaElement;
   lazyLoadCheckbox: HTMLInputElement;
-  orderSequence: HTMLSelectElement;
+  openSequence: HTMLSelectElement;
   preserveCheckbox: HTMLInputElement;
   ignoreDuplicatesCheckbox: HTMLInputElement;
   openButton: HTMLInputElement;
@@ -17,7 +17,7 @@ export function getUIDef(): UIDef {
   return {
     txtArea: document.getElementById('urls') as HTMLTextAreaElement,
     lazyLoadCheckbox: document.getElementById('lazyLoad') as HTMLInputElement,
-    orderSequence: document.getElementById('opening-sequence') as HTMLSelectElement,
+    openSequence: document.getElementById('opening-sequence') as HTMLSelectElement,
     preserveCheckbox: document.getElementById('preserve') as HTMLInputElement,
     ignoreDuplicatesCheckbox: document.getElementById('ignoreDuplicates') as HTMLInputElement,
     openButton: document.getElementById('open') as HTMLInputElement,

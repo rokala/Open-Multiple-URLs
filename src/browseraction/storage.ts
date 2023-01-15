@@ -3,7 +3,7 @@ import browser from 'webextension-polyfill';
 export enum StorageKey {
   urlList = 'txt',
   lazyload = 'lazyload',
-  orderSequence = 'orderSequence',
+  openSequence = 'openSequence',
   ignoreDuplicates = 'ignoreDuplicates',
   preserve = 'preserve',
 }
@@ -11,7 +11,7 @@ export enum StorageKey {
 export interface StoredOptions {
   [StorageKey.urlList]: string;
   [StorageKey.lazyload]: boolean;
-  [StorageKey.orderSequence]: number;
+  [StorageKey.openSequence]: number;
   [StorageKey.ignoreDuplicates]: boolean;
   [StorageKey.preserve]: boolean;
 }
@@ -19,14 +19,14 @@ export interface StoredOptions {
 export async function getStoredOptions(): Promise<StoredOptions> {
   const txtVal = await browser.storage.local.get(StorageKey.urlList);
   const lazyloadVal = await browser.storage.local.get(StorageKey.lazyload);
-  const orderSequenceVal = await browser.storage.local.get(StorageKey.orderSequence);
+  const openSequenceVal = await browser.storage.local.get(StorageKey.openSequence);
   const ignoreDuplicatesVal = await browser.storage.local.get(StorageKey.ignoreDuplicates);
   const preserveVal = await browser.storage.local.get(StorageKey.preserve);
 
   return {
     txt: txtVal?.txt || '',
     lazyload: lazyloadVal?.lazyload || false,
-    orderSequence: orderSequenceVal?.orderSequence || 0,
+    openSequence: openSequenceVal?.openSequence || 0,
     ignoreDuplicates: ignoreDuplicatesVal?.ignoreDuplicates || false,
     preserve: txtVal?.txt || preserveVal?.preserve || false,
   };

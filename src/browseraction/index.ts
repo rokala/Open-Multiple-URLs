@@ -59,8 +59,7 @@ export const init = async (): Promise<void> => {
   const options = await getStoredOptions();
   ui.txtArea.value = options.txt;
   ui.lazyLoadCheckbox.checked = options.lazyload;
-
-  ui.orderSequence.selectedIndex = options.orderSequence;
+  ui.openSequence.selectedIndex = options.openSequence;
   ui.ignoreDuplicatesCheckbox.checked = options.ignoreDuplicates;
   ui.preserveCheckbox.checked = options.preserve;
 
@@ -76,7 +75,7 @@ export const init = async (): Promise<void> => {
     loadSites(
       ui.txtArea.value,
       ui.lazyLoadCheckbox.checked,
-      ui.orderSequence.options[ui.orderSequence.selectedIndex].value,
+      ui.openSequence.options[ui.openSequence.selectedIndex].value,
       ui.ignoreDuplicatesCheckbox.checked,
     );
   });
@@ -93,9 +92,9 @@ export const init = async (): Promise<void> => {
       (<HTMLInputElement>event.target).checked
     )
   );
-  ui.orderSequence.addEventListener('change', (event) =>
+  ui.openSequence.addEventListener('change', (event) =>
     storeValue<number>(
-      StorageKey.orderSequence,
+      StorageKey.openSequence,
       (<HTMLSelectElement>event.target).selectedIndex
     )
   );
