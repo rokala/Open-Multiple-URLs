@@ -1,5 +1,6 @@
 import { extractURLs } from './extract';
-import { loadSites, URL_LINE_SPLIT_REGEX } from './load';
+import { loadSites } from './load';
+import { splitLines } from './splitter';
 import { getStoredOptions, StorageKey, storeValue } from './storage';
 import { getUIDef, UIDef } from './ui';
 import { debounce } from 'ts-debounce';
@@ -23,10 +24,8 @@ const updateTabCount = (ui: UIDef) => {
   let tabCount = '0';
   let tabCountIgnored = '0';
   if (ui.txtArea.value) {
-    let lines = ui.txtArea.value
-      .split(URL_LINE_SPLIT_REGEX)
-      .filter((line) => line.trim() !== '')
-      .map((line) => line.trim());
+    let lines = splitLines(ui.txtArea.value);
+      
     if (ui.ignoreDuplicatesCheckbox.checked) {
       const tabCountOriginal = lines.length;
       lines = lines.reduce((uniqueLines, line) => uniqueLines.includes(line) ? uniqueLines : [...uniqueLines, line], []);

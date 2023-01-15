@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-
+import { splitLines } from './splitter';
 /**
  * Shuffles array in place.
  * @param {Array} a items An array containing the items.
@@ -15,7 +15,6 @@ function shuffle(a) {
   return a;
 }
 
-export const URL_LINE_SPLIT_REGEX = /\r\n?|\n/g;
 /**
  * Loads sites in new background tabs
  * @param text Text containing one URL per line
@@ -29,7 +28,7 @@ export function loadSites(
   ignoreDuplicates: boolean
 ): void {
   const urlschemes = ['http', 'https', 'file', 'view-source'];
-  let urls = text.split(URL_LINE_SPLIT_REGEX);
+  let urls = splitLines(text);
 
   switch (openingSequence) {
     case 'reverse':
