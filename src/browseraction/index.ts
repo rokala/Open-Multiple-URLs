@@ -4,6 +4,7 @@ import { splitLines } from './splitter';
 import { getStoredOptions, StorageKey, storeValue } from './storage';
 import { getUIDef, UIDef } from './ui';
 import { debounce } from 'ts-debounce';
+import TLN from './scripts/tln';
 
 export {};
 
@@ -52,6 +53,7 @@ const debouncedUpdateTabCount = debounce(
 );
 
 export const init = async (): Promise<void> => {
+  TLN.appendLineNumbers('urls');
   const ui = getUIDef();
 
   // restore options

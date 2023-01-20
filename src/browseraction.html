@@ -2,25 +2,28 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./browseraction/index.css" />
+    <link rel="stylesheet" href="./browseraction/style/index.css" />
+    <link rel="stylesheet" href="./browseraction/style/tln.css" />
   </head>
 
   <body>
     <main>
       <section>
-        <label for="urls">List of URLs / Text to extract URLs from:</label>
-        <textarea id="urls" wrap="soft" tabindex="1"></textarea>
+        <label for="urls">Insert URLs or text to extract URLs from:</label>
+        <div id="urls-wrapper">
+          <textarea id="urls" wrap="soft" tabindex="1"></textarea>
+        </div>
       </section>
 
       <section>
-        <button id="extract" tabindex="3">Extract URLs from text</button>
         <button id="open" tabindex="2">
-          <strong>Open URLs</strong>
+          Open URLs
+        </button>
+        <button id="extract" tabindex="3">
+          Extract URLs from text
         </button>
         <span id="tabcount">
-          <abbr
-            title="Opening too many tabs at once may lead to long wait times or crash your browser."
-          >
+          <abbr title="Opening too many tabs at once may lead to long wait times or crash your browser.">
             &#9432;
             <span
               >will open <span id="tabcount-number">0</span> new
@@ -44,7 +47,7 @@
           ><input type="checkbox" id="ignoreDuplicates" tabindex="5" /> Ignore duplicate URLs
           </label
         >
-        
+
       </section>
 
       <section>
