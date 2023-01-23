@@ -11,6 +11,14 @@
       <button id="extract" class="secondary" tabindex="2" disabled>
         Extract URLs
       </button>
+      <label for="extract-method">
+        Extract method <br />
+        <select name="extract-method" id="extract-method" tabindex="6">
+          <option value="url-knife">url-knife</option>
+          <option value="regex-alpha">regex-alpha</option>
+          <option value="regex-beta">regex-beta</option>
+        </select>
+      </label>
       <label class="checkbox">
         <input type="checkbox" id="preserve" tabindex="3" /> Remember input
       </label>
@@ -21,10 +29,10 @@
     <section class="form-controls">
       <div>
         <label class="checkbox">
-          <input type="checkbox" id="lazyLoad" tabindex="4" /> Load tab when selected
+          <input type="checkbox" id="lazy-load" tabindex="4" /> Load tab when selected
         </label>
         <label class="checkbox">
-          <input type="checkbox" id="ignoreDuplicates" tabindex="5" />
+          <input type="checkbox" id="ignore-duplicates" tabindex="5" />
           <span>
             Ignore duplicate URLs (<span id="tabcount-ignored"></span> found)
           </span>

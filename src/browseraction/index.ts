@@ -56,6 +56,7 @@ export const init = async (): Promise<void> => {
   ui.openSequence.selectedIndex = options.openSequence;
   ui.ignoreDuplicatesCheckbox.checked = options.ignoreDuplicates;
   ui.preserveCheckbox.checked = options.preserve;
+  ui.extractMethod.selectedIndex = options.extractMethod;
   resolveButtonStatus(ui);
 
   // add text input events
@@ -76,7 +77,7 @@ export const init = async (): Promise<void> => {
     );
   });
   ui.extractButton.addEventListener('click', () => {
-    ui.txtArea.value = extractURLs(ui.txtArea.value);
+    ui.txtArea.value = extractURLs(ui.txtArea.value, ui.extractMethod.value);
     saveUrlList(ui);
     updateTabCount(ui);
     ui.txtArea.dispatchEvent(new Event('input'));
@@ -107,7 +108,12 @@ export const init = async (): Promise<void> => {
     storeValue<boolean>(StorageKey.preserve, isChecked);
     storeValue<string>(StorageKey.urlList, isChecked ? ui.txtArea.value : '');
   });
-
+  ui.extractMethod.addEventListener('change', (event) =>
+    storeValue<number>(
+      StorageKey.extractMethod,
+      (<HTMLSelectElement>event.target).selectedIndex
+    )
+  );
   // update tabcount
   updateTabCount(ui);
 
