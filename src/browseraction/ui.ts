@@ -7,10 +7,7 @@ export interface UIDef {
   openButton: HTMLInputElement;
   extractButton: HTMLInputElement;
   tabCount: HTMLSpanElement;
-  tabCountNumber: HTMLSpanElement;
-  tabCountTabLabel: HTMLSpanElement;
-  tabCountIgnored: HTMLSpanElement;
-  tabCountIgnoredNumber: HTMLSpanElement;
+  tabIgnoreCount: HTMLSpanElement;
 }
 
 export function getUIDef(): UIDef {
@@ -22,10 +19,7 @@ export function getUIDef(): UIDef {
     ignoreDuplicatesCheckbox: document.getElementById('ignoreDuplicates') as HTMLInputElement,
     openButton: document.getElementById('open') as HTMLInputElement,
     extractButton: document.getElementById('extract') as HTMLInputElement,
-    tabCount: document.getElementById('tabcount') as HTMLSpanElement,
-    tabCountNumber: document.getElementById('tabcount-number') as HTMLSpanElement,
-    tabCountTabLabel: document.getElementById('tabcount-tab-label') as HTMLSpanElement,
-    tabCountIgnored: document.getElementById('tabcount-ignored') as HTMLSpanElement,
-    tabCountIgnoredNumber: document.getElementById('tabcount-ignored-number') as HTMLSpanElement
+    tabCount: document.getElementById('tabcount-label') as HTMLSpanElement,
+    tabIgnoreCount: document.getElementById('tabcount-ignored') as HTMLSpanElement
   };
 }

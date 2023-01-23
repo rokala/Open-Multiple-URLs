@@ -2,21 +2,21 @@ import {
   init,
   SAVE_URL_LIST_DEBOUNCE_TIME_MS,
   UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS,
-} from '.';
-import { extractURLs } from './extract';
-import { loadSites } from './load';
-import { getStoredOptions, StorageKey, storeValue } from './storage';
-import { getUIDef } from './ui';
+} from '..';
+import { extractURLs } from '../extract';
+import { loadSites } from '../load';
+import { getStoredOptions, StorageKey, storeValue } from '../storage';
+import { getUIDef } from '../ui';
 import * as fs from 'fs';
 
 const BODY_HTML = fs.readFileSync('./src/browseraction.html', 'utf-8');
 
 let mockStore = {};
-jest.mock('./load', () => ({
-  ...jest.requireActual('./load'),
-  loadSites: jest.fn(),
+jest.mock('../load', () => ({
+  ...jest.requireActual('../load'),
+  loadSites: jest.fn()
 }));
-jest.mock('./extract');
+jest.mock('../extract');
 jest.mock('webextension-polyfill', () => ({
   tabs: { create: jest.fn() },
   runtime: { getURL: (val: string) => val },
@@ -187,7 +187,6 @@ describe('test browser action', () => {
 
   test('call extract on button click', async () => {
     await init();
-
     const uiDef = getUIDef();
     uiDef.extractButton.click();
 
@@ -196,55 +195,33 @@ describe('test browser action', () => {
 
   test('display tab count', async () => {
     const uiDef = getUIDef();
-    const hasNoTabCount = () => {
-      return uiDef.tabCount.style.visibility === 'hidden';
+
+    const hasTabCount = (numTabs: number) => {
+      return uiDef.tabCount.textContent === String(numTabs);
     };
-    const hasTabCount = (tabNo: string) => {
-      return (
-        uiDef.tabCount.style.visibility === 'visible' &&
-        uiDef.tabCount.textContent
-          .replace(/\s+/g, ' ')
-          .indexOf(
-            `will open ${tabNo} new ${tabNo === '1' ? 'tab' : 'tabs'}`
-          ) !== -1
-      );
+
+    const setTextareaInput = (text: string) => {
+      uiDef.txtArea.value = text;
+      uiDef.txtArea.dispatchEvent(new Event('input'));
     };
 
     await init();
 
-    expect(hasNoTabCount()).toBeTruthy();
+    expect(hasTabCount(0)).toBeTruthy();
 
-    uiDef.txtArea.value = 'https://test.de';
-    uiDef.txtArea.dispatchEvent(new Event('input'));
-    expect(hasNoTabCount()).toBeTruthy();
+    setTextareaInput('https://test.de');
+    expect(hasTabCount(0)).toBeTruthy();
     await sleep(UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS);
-    expect(hasTabCount('1')).toBeTruthy();
+    expect(hasTabCount(1)).toBeTruthy();
 
-    uiDef.txtArea.value = 'https://test.de\nhttps://spiegel.de';
-    uiDef.txtArea.dispatchEvent(new Event('input'));
-    expect(hasTabCount('1')).toBeTruthy();
+    setTextareaInput('https://test.de\nhttps://spiegel.de');
+    expect(hasTabCount(1)).toBeTruthy();
     await sleep(UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS);
-    expect(hasTabCount('2')).toBeTruthy();
+    expect(hasTabCount(2)).toBeTruthy();
 
-    uiDef.txtArea.value =
-      'https://test.de\n\nhttps://spiegel.de\n    \nhttps://zeit.de\n\n   \n ';
-    uiDef.txtArea.dispatchEvent(new Event('input'));
-    expect(hasTabCount('2')).toBeTruthy();
+    setTextareaInput('https://test.de\n\nhttps://spiegel.de\n    \nhttps://zeit.de\n\n   \n ');
+    expect(hasTabCount(2)).toBeTruthy();
     await sleep(UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS);
-    expect(hasTabCount('3')).toBeTruthy();
-
-    uiDef.txtArea.value = 'https://test.de\n'.repeat(5001);
-    uiDef.txtArea.dispatchEvent(new Event('input'));
-    expect(hasTabCount('3')).toBeTruthy();
-    await sleep(UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS);
-    expect(hasTabCount('> 5000')).toBeTruthy();
-
-    uiDef.txtArea.value =
-      'https://test.de\n'.repeat(123).concat('\n\nhttps://spiegel.de\n    \nhttps://zeit.de\n\n   \n ');
-    uiDef.txtArea.dispatchEvent(new Event('input'));
-    expect(hasTabCount('> 5000')).toBeTruthy();
-    uiDef.ignoreDuplicatesCheckbox.checked = true;
-    await sleep(UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS);
-    expect(hasTabCount('3')).toBeTruthy();
+    expect(hasTabCount(3)).toBeTruthy();
   });
 });

@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import { splitLines } from './splitter';
+
 /**
  * Shuffles array in place.
  * @param {Array} a items An array containing the items.
@@ -43,6 +44,11 @@ export function loadSites(
 
   if (ignoreDuplicates) {
     urls = urls.reduce((uniqueUrls, url) => uniqueUrls.includes(url) ? uniqueUrls : [...uniqueUrls, url], []);
+  }
+
+  if (urls.length > 99 && !confirm(`You're about to open ${urls.length} tabs. Are you sure?`)) {
+    // Abort tab open
+    return;
   }
 
   for (let i = 0; i < urls.length; i++) {

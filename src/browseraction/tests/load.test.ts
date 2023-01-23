@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
-import { loadSites } from './load';
+import { loadSites } from '../load';
+import { splitLines } from '../splitter';
 
 jest.mock('webextension-polyfill', () => ({
   tabs: { create: jest.fn() },

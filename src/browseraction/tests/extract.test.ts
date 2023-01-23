@@ -1,4 +1,4 @@
-import { extractURLs } from './extract';
+import { extractURLs } from '../extract';
 
 test('extract urls', async () => {
   expect(extractURLs('https://test.de\nfoo\nhttp://example.com\nbar')).toBe(

@@ -38,12 +38,12 @@ const TLN = {
 		}
 		// If <textarea> already has TLN active, warn and leave
 		if (ta.className.indexOf('tln-active') != -1) {
-			console.warn(`textarea of id: "${id}" is already numbered`)
+			console.warn(`textarea of id: "${id}" is already numbered`);
 			return;
 		}
 		// Otherwise, we're safe to add the class name and clear inline styles
 		ta.classList.add('tln-active');
-		ta.style = {};
+		//ta.style = {};
 
 		// Create line numbers wrapper, insert it before <textarea>
 		const el = document.createElement('div');
@@ -60,7 +60,7 @@ const TLN = {
 			'propertychange', 'input', 'keydown', 'keyup'
 		];
 		// Default handler for input events
-		const changeHdlr = function (ta, el) {
+		const onTextareaChange = function (ta, el) {
 			return function (e) {
 				// If pressed key is Left Arrow (when cursor is on the first character),
 				// or if it's Enter/Home, then we set horizontal scroll to 0
@@ -83,10 +83,10 @@ const TLN = {
 		/// listeners? I feel the update method is optimal enough for this to not
 		/// impact too much things.
 		for (let i = changeEvts.length - 1; i >= 0; i--) {
-			ta.addEventListener(changeEvts[i], changeHdlr);
+			ta.addEventListener(changeEvts[i], onTextareaChange);
 			TLN.eventList[id].push({
 				evt: changeEvts[i],
-				hdlr: changeHdlr
+				hdlr: onTextareaChange
 			});
 		}
 
@@ -105,38 +105,7 @@ const TLN = {
 				hdlr: scrollHdlr
 			});
 		}
-	},
-	removeLineNumbers: function (id) {
-		// Get reference to <textarea>
-		const ta = document.getElementById(id);
-		// If getting reference to element fails, warn and leave
-		if (ta === null) {
-			console.warn(`Couldn't find textarea of id: ${id}`);
-			return;
-		}
-		// If <textarea> already doesn't have TLN active, warn and leave
-		if (ta.className.indexOf('tln-active') === -1) {
-			console.warn(`textarea of id: ${id} isn't numbered`);
-			return;
-		}
-		// Otherwise, remove class name
-		ta.classList.remove('tln-active');
-
-		// Remove previous sibling if it's our wrapper (otherwise, I guess 'woops'?)
-		const wrapperChck = ta.previousSibling;
-		if (wrapperChck.className === 'tln-wrapper')
-			wrapperChck.remove();
-
-		// If somehow there's no event listeners list, we can leave
-		if (!TLN.eventList[id]) return;
-		// Otherwise iterate through listeners list and remove each one
-		for (let i = TLN.eventList[id].length - 1; i >= 0; i--) {
-			const evt = TLN.eventList[id][i];
-			ta.removeEventListener(evt.evt, evt.hdlr);
-		}
-		// Finally, delete the listeners list for that ID
-		delete TLN.eventList[id];
 	}
 }
 
-export default TLN;
+export { TLN };

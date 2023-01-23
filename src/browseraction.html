@@ -1,72 +1,52 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./browseraction/style/index.css" />
-    <link rel="stylesheet" href="./browseraction/style/tln.css" />
-  </head>
-
-  <body>
-    <main>
-      <section>
-        <label for="urls">Insert URLs or text to extract URLs from:</label>
-        <div id="urls-wrapper">
-          <textarea id="urls" wrap="soft" tabindex="1"></textarea>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="./browseraction/style/index.css" />
+  <link rel="stylesheet" href="./browseraction/style/tln.css" />
+</head>
+<body>
+  <main>
+    <section class="form-controls">
+      <button id="extract" class="secondary" tabindex="2" disabled>
+        Extract URLs
+      </button>
+      <label class="checkbox">
+        <input type="checkbox" id="preserve" tabindex="3" /> Remember input
+      </label>
+    </section>
+    <section id="textarea-wrapper">
+      <textarea id="urls" wrap="soft" tabindex="1" placeholder="Insert URLs or text to extract URLs from..."></textarea>
+    </section>
+    <section class="form-controls">
+      <div>
+        <label class="checkbox">
+          <input type="checkbox" id="lazyLoad" tabindex="4" /> Load tab when selected
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="ignoreDuplicates" tabindex="5" />
+          <span>
+            Ignore duplicate URLs (<span id="tabcount-ignored"></span> found)
+          </span>
+        </label>
+        <div>
+          <label for="sequence">
+            Order of opening
+            <select name="sequence" id="opening-sequence" tabindex="6">
+              <option value="chronological">Chronological</option>
+              <option value="reverse">Reversed</option>
+              <option value="random">Random</option>
+            </select>
+          </label>
         </div>
-      </section>
-
-      <section>
-        <button id="open" tabindex="2">
-          Open URLs
+      </div>
+      <div>
+        <button id="open" class="primary" tabindex="7" disabled>
+          Open <span id="tabcount-label"></span>
         </button>
-        <button id="extract" tabindex="3">
-          Extract URLs from text
-        </button>
-        <span id="tabcount">
-          <abbr title="Opening too many tabs at once may lead to long wait times or crash your browser.">
-            &#9432;
-            <span
-              >will open <span id="tabcount-number">0</span> new
-              <span id="tabcount-tab-label">tabs</span></span
-            >
-            <span id="tabcount-ignored">
-              (<span id="tabcount-ignored-number">0</span> ignored)
-            </span>
-          </abbr>
-        </span>
-      </section>
-
-      <hr />
-
-      <section>
-        <label class="checkbox"
-          ><input type="checkbox" id="lazyLoad" tabindex="4" /> Do not load tabs
-          until selected</label
-        >
-        <label class="checkbox"
-          ><input type="checkbox" id="ignoreDuplicates" tabindex="5" /> Ignore duplicate URLs
-          </label
-        >
-
-      </section>
-
-      <section>
-        <label for="sequence">Opening sequence:</label>
-        <select name="sequence" id="opening-sequence" tabindex="6">
-          <option value="chronological">Chronological</option>
-          <option value="reverse">Reverse</option>
-          <option value="random">Random</option>
-        </select>
-      </section>
-
-      <section>
-        <label class="checkbox"
-          ><input type="checkbox" id="preserve" tabindex="7" /> Preserve
-          input</label
-        >
-      </section>
-    </main>
-
-    <script src="./browseraction/index.ts"></script>
-  </body>
+      </div>
+    </section>
+  </main>
+  <script src="./browseraction/index.ts"></script>
+</body>
 </html>

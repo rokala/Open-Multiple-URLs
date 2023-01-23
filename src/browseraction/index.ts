@@ -4,7 +4,7 @@ import { splitLines } from './splitter';
 import { getStoredOptions, StorageKey, storeValue } from './storage';
 import { getUIDef, UIDef } from './ui';
 import { debounce } from 'ts-debounce';
-import TLN from './scripts/tln';
+import { TLN } from './tln';
 
 export {};
 
@@ -15,6 +15,8 @@ const saveUrlList = async (ui: UIDef): Promise<void> => {
   if (ui.preserveCheckbox.checked) {
     await storeValue<string>(StorageKey.urlList, ui.txtArea.value);
   }
+  ui.openButton.disabled = (ui.txtArea.value === '');
+  ui.extractButton.disabled = (ui.txtArea.value === '');
 };
 const debouncedSaveUrlList = debounce(
   saveUrlList,
@@ -22,38 +24,29 @@ const debouncedSaveUrlList = debounce(
 );
 
 const updateTabCount = (ui: UIDef) => {
-  let tabCount = '0';
-  let tabCountIgnored = '0';
+  let tabCount = 0;
+  let tabIgnoreCount = 0;
   if (ui.txtArea.value) {
-    let lines = splitLines(ui.txtArea.value);
-      
-    if (ui.ignoreDuplicatesCheckbox.checked) {
-      const tabCountOriginal = lines.length;
-      lines = lines.reduce((uniqueLines, line) => uniqueLines.includes(line) ? uniqueLines : [...uniqueLines, line], []);
-      tabCountIgnored = String(tabCountOriginal - lines.length);
-    }
-    if (lines.length <= 5000) {
-      // limit for performance reasons
-      tabCount = String(lines.length);
-    } else {
-      tabCount = '> 5000';
-    }
+    const lines = splitLines(ui.txtArea.value);
+    const linesUnique = lines.reduce((uniqueLines, line) => uniqueLines.includes(line) ? uniqueLines : [...uniqueLines, line], []);
+    tabCount = ui.ignoreDuplicatesCheckbox.checked ? linesUnique.length : lines.length;
+    tabIgnoreCount = lines.length - linesUnique.length;
   }
-
-  ui.tabCountNumber.textContent = tabCount;
-  ui.tabCountTabLabel.textContent = tabCount === '1' ? 'tab' : 'tabs';
-  ui.tabCount.style.visibility = tabCount === '0' ? 'hidden' : 'visible';
-
-  ui.tabCountIgnoredNumber.textContent = tabCountIgnored;
-  ui.tabCountIgnored.style.visibility = tabCountIgnored === '0' ? 'hidden' : 'visible';
+  ui.tabCount.textContent = String(tabCount);
+  ui.tabCount.style.setProperty('--tabcount-suffix', tabCount === 1 ? '" tab"' : '" tabs"');
+  ui.tabIgnoreCount.textContent = String(tabIgnoreCount);
 };
 const debouncedUpdateTabCount = debounce(
   updateTabCount,
   UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS
 );
 
+const resolveButtonStatus = (ui) => {
+  ui.openButton.disabled = (ui.txtArea.value === '');
+  ui.extractButton.disabled = (ui.txtArea.value === '');
+}
+
 export const init = async (): Promise<void> => {
-  TLN.appendLineNumbers('urls');
   const ui = getUIDef();
 
   // restore options
@@ -63,9 +56,11 @@ export const init = async (): Promise<void> => {
   ui.openSequence.selectedIndex = options.openSequence;
   ui.ignoreDuplicatesCheckbox.checked = options.ignoreDuplicates;
   ui.preserveCheckbox.checked = options.preserve;
+  resolveButtonStatus(ui);
 
   // add text input events
   ui.txtArea.addEventListener('input', () => {
+    resolveButtonStatus(ui);
     debouncedSaveUrlList(ui);
     debouncedUpdateTabCount(ui);
   });
@@ -84,6 +79,7 @@ export const init = async (): Promise<void> => {
     ui.txtArea.value = extractURLs(ui.txtArea.value);
     saveUrlList(ui);
     updateTabCount(ui);
+    ui.txtArea.dispatchEvent(new Event('input'));
   });
 
   // add options events
@@ -117,6 +113,8 @@ export const init = async (): Promise<void> => {
 
   // select text in form field
   ui.txtArea.select();
+
+  TLN.appendLineNumbers('urls');
 };
 
 document.addEventListener('DOMContentLoaded', init);
