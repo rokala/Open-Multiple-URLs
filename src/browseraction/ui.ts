@@ -6,6 +6,7 @@ export interface UIDef {
   ignoreDuplicatesCheckbox: HTMLInputElement;
   openButton: HTMLInputElement;
   extractButton: HTMLInputElement;
+  extractMethod: HTMLSelectElement;
   tabCount: HTMLSpanElement;
   tabIgnoreCount: HTMLSpanElement;
 }
@@ -19,6 +20,7 @@ export function getUIDef(): UIDef {
     ignoreDuplicatesCheckbox: document.getElementById('ignore-duplicates') as HTMLInputElement,
     openButton: document.getElementById('open') as HTMLInputElement,
     extractButton: document.getElementById('extract') as HTMLInputElement,
+    extractMethod: document.getElementById('extract-method') as HTMLSelectElement,
     tabCount: document.getElementById('tabcount-label') as HTMLSpanElement,
     tabIgnoreCount: document.getElementById('tabcount-ignored') as HTMLSpanElement
   };
