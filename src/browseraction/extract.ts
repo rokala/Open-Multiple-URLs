@@ -18,13 +18,16 @@ export function extractURLs(text: string, method: string): string {
       })
       .map(res => res.value.url);
       break;
-    case 'regex-alpha':
+    case 'regex-alpha': {
       const regexAlpha = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()[\]{};:'".,<>?«»“”‘’]))/gi;
       urls = text.match(regexAlpha);
       break;
-    case 'regex-beta':
-      const regexBeta = /(\b(https?|ftp|file|chrome|about):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+    }
+    case 'regex-beta': {
+      const regexBeta = /(\b(https?|ftp|file|chrome|about):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
       urls = text.match(regexBeta);
+      break;
+    }
     default:
       throw new Error(`Unknown extraction method '${method}' selected.`);
   }
