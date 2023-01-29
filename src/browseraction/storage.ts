@@ -4,7 +4,7 @@ export enum StorageKey {
   urlList = 'txt',
   lazyload = 'lazyload',
   openSequence = 'openSequence',
-  ignoreDuplicates = 'ignore-duplicates',
+  ignoreDuplicates = 'ignoreDuplicates',
   preserve = 'preserve',
   extractMethod = 'extractMethod'
 }
