@@ -6,7 +6,7 @@ import {
 import { extractURLs } from '../extract';
 import { loadSites } from '../load';
 import { getStoredOptions, StorageKey, storeValue } from '../storage';
-import { getUIDef } from '../ui';
+import { getUIMain } from '../ui';
 import * as fs from 'fs';
 
 const BODY_HTML = fs.readFileSync('./src/browseraction.html', 'utf-8');
@@ -43,63 +43,63 @@ describe('test browser action', () => {
   test('init and render elements', async () => {
     await init();
 
-    const uiDef = getUIDef();
-    expect(uiDef.txtArea).toBeTruthy();
-    expect(uiDef.lazyLoadCheckbox).toBeTruthy();
-    expect(uiDef.openSequence).toBeTruthy();
-    expect(uiDef.ignoreDuplicatesCheckbox).toBeTruthy();
-    expect(uiDef.preserveCheckbox).toBeTruthy();
-    expect(uiDef.openButton).toBeTruthy();
-    expect(uiDef.extractButton).toBeTruthy();
+    const uiDef = getUIMain();
+    expect(uiDef.input.textareaInput).toBeTruthy();
+    expect(uiDef.open.checkboxLazyLoad).toBeTruthy();
+    expect(uiDef.open.selectSequence).toBeTruthy();
+    expect(uiDef.open.checkboxIgnoreDuplicates).toBeTruthy();
+    expect(uiDef.input.checkboxSave).toBeTruthy();
+    expect(uiDef.open.buttonExecute).toBeTruthy();
+    expect(uiDef.extract.buttonExecute).toBeTruthy();
   });
 
   test('set default options', async () => {
     await init();
 
-    const uiDef = getUIDef();
-    expect(uiDef.txtArea.value).toBe('');
-    expect(uiDef.lazyLoadCheckbox.checked).toBe(false);
-    expect(uiDef.openSequence.selectedIndex).toBe(0);
-    expect(uiDef.ignoreDuplicatesCheckbox.checked).toBe(false);
-    expect(uiDef.preserveCheckbox.checked).toBe(false);
+    const uiDef = getUIMain();
+    expect(uiDef.input.textareaInput.value).toBe('');
+    expect(uiDef.open.checkboxLazyLoad.checked).toBe(false);
+    expect(uiDef.open.selectSequence.selectedIndex).toBe(0);
+    expect(uiDef.open.checkboxIgnoreDuplicates.checked).toBe(false);
+    expect(uiDef.input.checkboxSave.checked).toBe(false);
   });
 
   test('restore options', async () => {
     await init();
 
-    let uiDef = getUIDef();
-    uiDef.txtArea.value = 'foobar';
-    uiDef.txtArea.dispatchEvent(new Event('input'));
-    uiDef.lazyLoadCheckbox.click();
-    uiDef.openSequence.selectedIndex = 1;
-    uiDef.openSequence.dispatchEvent(new Event('change'));
-    uiDef.ignoreDuplicatesCheckbox.click();
-    uiDef.preserveCheckbox.click();
+    let uiDef = getUIMain();
+    uiDef.input.textareaInput.value = 'foobar';
+    uiDef.input.textareaInput.dispatchEvent(new Event('input'));
+    uiDef.open.checkboxLazyLoad.click();
+    uiDef.open.selectSequence.selectedIndex = 1;
+    uiDef.open.selectSequence.dispatchEvent(new Event('change'));
+    uiDef.open.checkboxIgnoreDuplicates.click();
+    uiDef.input.checkboxSave.click();
 
-    uiDef = getUIDef();
-    expect(uiDef.txtArea.value).toBe('foobar');
-    expect(uiDef.lazyLoadCheckbox.checked).toBe(true);
-    expect(uiDef.openSequence.selectedIndex).toBe(1);
-    expect(uiDef.ignoreDuplicatesCheckbox.checked).toBe(true);
-    expect(uiDef.preserveCheckbox.checked).toBe(true);
+    uiDef = getUIMain();
+    expect(uiDef.input.textareaInput.value).toBe('foobar');
+    expect(uiDef.open.checkboxLazyLoad.checked).toBe(true);
+    expect(uiDef.open.selectSequence.selectedIndex).toBe(1);
+    expect(uiDef.open.checkboxIgnoreDuplicates.checked).toBe(true);
+    expect(uiDef.input.checkboxSave.checked).toBe(true);
 
     document.body.innerHTML = BODY_HTML;
 
-    uiDef = getUIDef();
-    expect(uiDef.txtArea.value).toBe('');
-    expect(uiDef.lazyLoadCheckbox.checked).toBe(false);
-    expect(uiDef.openSequence.selectedIndex).toBe(0);
-    expect(uiDef.ignoreDuplicatesCheckbox.checked).toBe(false);
-    expect(uiDef.preserveCheckbox.checked).toBe(false);
+    uiDef = getUIMain();
+    expect(uiDef.input.textareaInput.value).toBe('');
+    expect(uiDef.open.checkboxLazyLoad.checked).toBe(false);
+    expect(uiDef.open.selectSequence.selectedIndex).toBe(0);
+    expect(uiDef.open.checkboxIgnoreDuplicates.checked).toBe(false);
+    expect(uiDef.input.checkboxSave.checked).toBe(false);
 
     await init();
 
-    uiDef = getUIDef();
-    expect(uiDef.txtArea.value).toBe('foobar');
-    expect(uiDef.lazyLoadCheckbox.checked).toBe(true);
-    expect(uiDef.openSequence.selectedIndex).toBe(1);
-    expect(uiDef.ignoreDuplicatesCheckbox.checked).toBe(true);
-    expect(uiDef.preserveCheckbox.checked).toBe(true);
+    uiDef = getUIMain();
+    expect(uiDef.input.textareaInput.value).toBe('foobar');
+    expect(uiDef.open.checkboxLazyLoad.checked).toBe(true);
+    expect(uiDef.open.selectSequence.selectedIndex).toBe(1);
+    expect(uiDef.open.checkboxIgnoreDuplicates.checked).toBe(true);
+    expect(uiDef.input.checkboxSave.checked).toBe(true);
   });
 
   test('set preserve checked if text exists in storage', async () => {
@@ -107,40 +107,40 @@ describe('test browser action', () => {
     storeValue(StorageKey.openSequence, 1);
     await init();
 
-    const uiDef = getUIDef();
-    expect(uiDef.txtArea.value).toBe('https://test.de');
-    expect(uiDef.lazyLoadCheckbox.checked).toBe(false);
-    expect(uiDef.openSequence.selectedIndex).toBe(1);
-    expect(uiDef.ignoreDuplicatesCheckbox.checked).toBe(false);
-    expect(uiDef.preserveCheckbox.checked).toBe(true);
+    const uiDef = getUIMain();
+    expect(uiDef.input.textareaInput.value).toBe('https://test.de');
+    expect(uiDef.open.checkboxLazyLoad.checked).toBe(false);
+    expect(uiDef.open.selectSequence.selectedIndex).toBe(1);
+    expect(uiDef.open.checkboxIgnoreDuplicates.checked).toBe(false);
+    expect(uiDef.input.checkboxSave.checked).toBe(true);
   });
 
   test('store url list depending on option state', async () => {
     await init();
 
-    const uiDef = getUIDef();
+    const uiDef = getUIMain();
 
-    uiDef.txtArea.value = 'foobar';
-    uiDef.txtArea.dispatchEvent(new Event('input'));
+    uiDef.input.textareaInput.value = 'foobar';
+    uiDef.input.textareaInput.dispatchEvent(new Event('input'));
     expect((await getStoredOptions()).txt).toBe('');
 
-    uiDef.preserveCheckbox.click();
+    uiDef.input.checkboxSave.click();
     expect((await getStoredOptions()).txt).toBe('foobar');
 
-    uiDef.txtArea.value = 'boofar';
-    uiDef.txtArea.dispatchEvent(new Event('input'));
+    uiDef.input.textareaInput.value = 'boofar';
+    uiDef.input.textareaInput.dispatchEvent(new Event('input'));
     expect((await getStoredOptions()).txt).toBe('foobar');
     await sleep(SAVE_URL_LIST_DEBOUNCE_TIME_MS);
     expect((await getStoredOptions()).txt).toBe('boofar');
 
-    uiDef.preserveCheckbox.click();
+    uiDef.input.checkboxSave.click();
     expect((await getStoredOptions()).txt).toBe('');
   });
 
   test('store option status', async () => {
     await init();
 
-    const uiDef = getUIDef();
+    const uiDef = getUIMain();
 
     let options = await getStoredOptions();
     expect(options.txt).toBe('');
@@ -149,11 +149,11 @@ describe('test browser action', () => {
     expect(options.ignoreDuplicates).toBe(false);
     expect(options.preserve).toBe(false);
 
-    uiDef.lazyLoadCheckbox.click();
-    uiDef.ignoreDuplicatesCheckbox.click();
-    uiDef.preserveCheckbox.click();
-    uiDef.openSequence.selectedIndex = 1;
-    uiDef.openSequence.dispatchEvent(new Event('change'));
+    uiDef.open.checkboxLazyLoad.click();
+    uiDef.open.checkboxIgnoreDuplicates.click();
+    uiDef.input.checkboxSave.click();
+    uiDef.open.selectSequence.selectedIndex = 1;
+    uiDef.open.selectSequence.dispatchEvent(new Event('change'));
 
     options = await getStoredOptions();
     expect(options.txt).toBe('');
@@ -162,11 +162,11 @@ describe('test browser action', () => {
     expect(options.ignoreDuplicates).toBe(true);
     expect(options.preserve).toBe(true);
 
-    uiDef.lazyLoadCheckbox.click();
-    uiDef.ignoreDuplicatesCheckbox.click();
-    uiDef.preserveCheckbox.click();
-    uiDef.openSequence.selectedIndex = 0;
-    uiDef.openSequence.dispatchEvent(new Event('change'));
+    uiDef.open.checkboxLazyLoad.click();
+    uiDef.open.checkboxIgnoreDuplicates.click();
+    uiDef.input.checkboxSave.click();
+    uiDef.open.selectSequence.selectedIndex = 0;
+    uiDef.open.selectSequence.dispatchEvent(new Event('change'));
 
     options = await getStoredOptions();
     expect(options.txt).toBe('');
@@ -179,30 +179,30 @@ describe('test browser action', () => {
   test('call open on button click', async () => {
     await init();
 
-    const uiDef = getUIDef();
-    uiDef.openButton.click();
+    const uiDef = getUIMain();
+    uiDef.open.buttonExecute.click();
 
     expect(loadSites).toHaveBeenCalled();
   });
 
   test('call extract on button click', async () => {
     await init();
-    const uiDef = getUIDef();
-    uiDef.extractButton.click();
+    const uiDef = getUIMain();
+    uiDef.extract.buttonExecute.click();
 
     expect(extractURLs).toHaveBeenCalled();
   });
 
   test('display tab count', async () => {
-    const uiDef = getUIDef();
+    const uiDef = getUIMain();
 
     const hasTabCount = (numTabs: number) => {
-      return uiDef.tabCount.textContent === String(numTabs);
+      return uiDef.dynamicLabels.textTabCount.textContent === String(numTabs);
     };
 
     const setTextareaInput = (text: string) => {
-      uiDef.txtArea.value = text;
-      uiDef.txtArea.dispatchEvent(new Event('input'));
+      uiDef.input.textareaInput.value = text;
+      uiDef.input.textareaInput.dispatchEvent(new Event('input'));
     };
 
     await init();

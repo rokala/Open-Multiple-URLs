@@ -2,7 +2,7 @@ import { extractURLs } from './extract';
 import { loadSites } from './load';
 import { splitLines } from './splitter';
 import { getStoredOptions, StorageKey, storeValue } from './storage';
-import { getUIDef, UIDef } from './ui';
+import { getUIMain, UIMain } from './ui';
 import { debounce } from 'ts-debounce';
 import { TLN } from './tln';
 
@@ -11,30 +11,30 @@ export {};
 export const SAVE_URL_LIST_DEBOUNCE_TIME_MS = 100;
 export const UPDATE_TAB_COUNT_DEBOUNCE_TIME_MS = 50;
 
-const saveUrlList = async (ui: UIDef): Promise<void> => {
-  if (ui.preserveCheckbox.checked) {
-    await storeValue<string>(StorageKey.urlList, ui.txtArea.value);
+const saveUrlList = async (ui: UIMain): Promise<void> => {
+  if (ui.input.checkboxSave.checked) {
+    await storeValue<string>(StorageKey.urlList, ui.input.textareaInput.value);
   }
-  ui.openButton.disabled = (ui.txtArea.value === '');
-  ui.extractButton.disabled = (ui.txtArea.value === '');
+  ui.open.buttonExecute.disabled = (ui.input.textareaInput.value === '');
+  ui.extract.buttonExecute.disabled = (ui.input.textareaInput.value === '');
 };
 const debouncedSaveUrlList = debounce(
   saveUrlList,
   SAVE_URL_LIST_DEBOUNCE_TIME_MS
 );
 
-const updateTabCount = (ui: UIDef) => {
+const updateTabCount = (ui: UIMain) => {
   let tabCount = 0;
   let tabIgnoreCount = 0;
-  if (ui.txtArea.value) {
-    const lines = splitLines(ui.txtArea.value);
+  if (ui.input.textareaInput.value) {
+    const lines = splitLines(ui.input.textareaInput.value);
     const linesUnique = lines.reduce((uniqueLines, line) => uniqueLines.includes(line) ? uniqueLines : [...uniqueLines, line], []);
-    tabCount = ui.ignoreDuplicatesCheckbox.checked ? linesUnique.length : lines.length;
+    tabCount = ui.open.checkboxIgnoreDuplicates.checked ? linesUnique.length : lines.length;
     tabIgnoreCount = lines.length - linesUnique.length;
   }
-  ui.tabCount.textContent = String(tabCount);
-  ui.tabCount.style.setProperty('--tabcount-suffix', tabCount === 1 ? '" tab"' : '" tabs"');
-  ui.tabIgnoreCount.textContent = String(tabIgnoreCount);
+  ui.dynamicLabels.textTabCount.textContent = String(tabCount);
+  ui.dynamicLabels.textTabCount.style.setProperty('--tabcount-suffix', tabCount === 1 ? '" tab"' : '" tabs"');
+  ui.dynamicLabels.textTabIgnoreCount.textContent = String(tabIgnoreCount);
 };
 const debouncedUpdateTabCount = debounce(
   updateTabCount,
@@ -42,73 +42,73 @@ const debouncedUpdateTabCount = debounce(
 );
 
 const resolveButtonStatus = (ui) => {
-  ui.openButton.disabled = (ui.txtArea.value === '');
-  ui.extractButton.disabled = (ui.txtArea.value === '');
+  ui.open.buttonExecute.disabled = (ui.input.textareaInput.value === '');
+  ui.extract.buttonExecute.disabled = (ui.input.textareaInput.value === '');
 }
 
 export const init = async (): Promise<void> => {
-  const ui = getUIDef();
+  const ui = getUIMain();
 
   // restore options
   const options = await getStoredOptions();
-  ui.txtArea.value = options.txt;
-  ui.lazyLoadCheckbox.checked = options.lazyload;
-  ui.openSequence.selectedIndex = options.openSequence;
-  ui.ignoreDuplicatesCheckbox.checked = options.ignoreDuplicates;
-  ui.preserveCheckbox.checked = options.preserve;
-  ui.extractMethod.selectedIndex = options.extractMethod;
+  ui.input.textareaInput.value = options.txt;
+  ui.open.checkboxLazyLoad.checked = options.lazyload;
+  ui.open.selectSequence.selectedIndex = options.openSequence;
+  ui.open.checkboxIgnoreDuplicates.checked = options.ignoreDuplicates;
+  ui.input.checkboxSave.checked = options.preserve;
+  ui.extract.selectMethod.selectedIndex = options.extractMethod;
   resolveButtonStatus(ui);
 
   // add text input events
-  ui.txtArea.addEventListener('input', () => {
+  ui.input.textareaInput.addEventListener('input', () => {
     resolveButtonStatus(ui);
     debouncedSaveUrlList(ui);
     debouncedUpdateTabCount(ui);
   });
 
   // add button events
-  ui.openButton.addEventListener('click', () => {
+  ui.open.buttonExecute.addEventListener('click', () => {
     saveUrlList(ui);
     loadSites(
-      ui.txtArea.value,
-      ui.lazyLoadCheckbox.checked,
-      ui.openSequence.options[ui.openSequence.selectedIndex].value,
-      ui.ignoreDuplicatesCheckbox.checked,
+      ui.input.textareaInput.value,
+      ui.open.checkboxLazyLoad.checked,
+      ui.open.selectSequence.options[ui.open.selectSequence.selectedIndex].value,
+      ui.open.checkboxIgnoreDuplicates.checked,
     );
   });
-  ui.extractButton.addEventListener('click', () => {
-    ui.txtArea.value = extractURLs(ui.txtArea.value, ui.extractMethod.value);
+  ui.extract.buttonExecute.addEventListener('click', () => {
+    ui.input.textareaInput.value = extractURLs(ui.input.textareaInput.value, ui.extract.selectMethod.value);
     saveUrlList(ui);
     updateTabCount(ui);
-    ui.txtArea.dispatchEvent(new Event('input'));
+    ui.input.textareaInput.dispatchEvent(new Event('input'));
   });
 
   // add options events
-  ui.lazyLoadCheckbox.addEventListener('change', (event) =>
+  ui.open.checkboxLazyLoad.addEventListener('change', (event) =>
     storeValue<boolean>(
       StorageKey.lazyload,
       (<HTMLInputElement>event.target).checked
     )
   );
-  ui.openSequence.addEventListener('change', (event) =>
+  ui.open.selectSequence.addEventListener('change', (event) =>
     storeValue<number>(
       StorageKey.openSequence,
       (<HTMLSelectElement>event.target).selectedIndex
     )
   );
-  ui.ignoreDuplicatesCheckbox.addEventListener('change', (event) => {
+  ui.open.checkboxIgnoreDuplicates.addEventListener('change', (event) => {
     debouncedUpdateTabCount(ui);
     storeValue<boolean>(
       StorageKey.ignoreDuplicates,
       (<HTMLInputElement>event.target).checked
     );
   });
-  ui.preserveCheckbox.addEventListener('change', (event) => {
+  ui.input.checkboxSave.addEventListener('change', (event) => {
     const isChecked = (<HTMLInputElement>event.target).checked;
     storeValue<boolean>(StorageKey.preserve, isChecked);
-    storeValue<string>(StorageKey.urlList, isChecked ? ui.txtArea.value : '');
+    storeValue<string>(StorageKey.urlList, isChecked ? ui.input.textareaInput.value : '');
   });
-  ui.extractMethod.addEventListener('change', (event) =>
+  ui.extract.selectMethod.addEventListener('change', (event) =>
     storeValue<number>(
       StorageKey.extractMethod,
       (<HTMLSelectElement>event.target).selectedIndex
@@ -118,7 +118,7 @@ export const init = async (): Promise<void> => {
   updateTabCount(ui);
 
   // select text in form field
-  ui.txtArea.select();
+  ui.input.textareaInput.select();
 
   TLN.appendLineNumbers('urls');
 };
