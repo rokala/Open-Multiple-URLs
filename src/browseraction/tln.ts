@@ -1,6 +1,6 @@
 const TLN = {
 	eventList: {},
-	updateLineNumber: function (ta, el) {
+	updateLineNumber: function (ta: HTMLTextAreaElement, el: HTMLDivElement) {
 		// Let's check if there are more or less lines than before
 		const lineCount = ta.value.split('\n').length;
 		const childCount = el.children.length;
@@ -28,25 +28,22 @@ const TLN = {
 			difference++;
 		}
 	},
-	appendLineNumbers: function (id) {
+	appendLineNumbers: function (id: string) {
 		// Get reference to desired <textarea>
-		const ta = document.getElementById(id);
+		const ta = document.getElementById(id) as HTMLTextAreaElement;
 		// If getting reference to element fails, warn and leave
 		if (ta === null) {
-			console.warn(`Couldn't find textarea of id: "${id}"`);
-			return;
+			throw new Error(`No element with id='${id} found'`);
 		}
-		// If <textarea> already has TLN active, warn and leave
+		// Exit if textarea element already has TLN active
 		if (ta.className.indexOf('tln-active') != -1) {
-			console.warn(`textarea of id: "${id}" is already numbered`);
 			return;
 		}
 		// Otherwise, we're safe to add the class name and clear inline styles
 		ta.classList.add('tln-active');
-		//ta.style = {};
 
 		// Create line numbers wrapper, insert it before <textarea>
-		const el = document.createElement('div');
+		const el = document.createElement('div') as HTMLDivElement;
 		el.className = 'tln-wrapper';
 		ta.parentNode.insertBefore(el, ta);
 		// Call update to actually insert line numbers to the wrapper
@@ -56,9 +53,7 @@ const TLN = {
 		TLN.eventList[id] = [];
 
 		// Constant list of input event names so we can iterate
-		const changeEvts = [
-			'propertychange', 'input', 'keydown', 'keyup'
-		];
+		const changeEvents = [ 'propertychange', 'input', 'keydown', 'keyup' ];
 		// Default handler for input events
 		const onTextareaChange = function (ta, el) {
 			return function (e) {
@@ -82,27 +77,27 @@ const TLN = {
 		/// TODO: Performance gurus: is this suboptimal? Should we only add a few
 		/// listeners? I feel the update method is optimal enough for this to not
 		/// impact too much things.
-		for (let i = changeEvts.length - 1; i >= 0; i--) {
-			ta.addEventListener(changeEvts[i], onTextareaChange);
+		for (let i = 0; i < changeEvents.length; i++) {
+			ta.addEventListener(changeEvents[i], onTextareaChange);
 			TLN.eventList[id].push({
-				evt: changeEvts[i],
-				hdlr: onTextareaChange
+				event: changeEvents[i],
+				handler: onTextareaChange
 			});
 		}
 
 		// Constant list of scroll event names so we can iterate
-		const scrollEvts = ['change', 'mousewheel', 'scroll'];
+		const scrollEvents = ['change', 'mousewheel', 'scroll'];
 		// Default handler for scroll events (pretty self explanatory)
-		const scrollHdlr = function (ta, el) {
+		const onScroll = function (ta, el) {
 			return function () { el.scrollTop = ta.scrollTop; }
 		}(ta, el);
 		// Just like before, iterate and add listeners to <textarea> and to list
 		/// TODO: Also just like before: performance?
-		for (let i = scrollEvts.length - 1; i >= 0; i--) {
-			ta.addEventListener(scrollEvts[i], scrollHdlr);
+		for (let i = scrollEvents.length - 1; i >= 0; i--) {
+			ta.addEventListener(scrollEvents[i], onScroll);
 			TLN.eventList[id].push({
-				evt: scrollEvts[i],
-				hdlr: scrollHdlr
+				event: scrollEvents[i],
+				handler: onScroll
 			});
 		}
 	}
